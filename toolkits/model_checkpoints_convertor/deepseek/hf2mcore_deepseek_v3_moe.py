@@ -276,7 +276,6 @@ def convert_checkpoint_from_transformers_to_megatron(hfmodel, mgmodel, args):
         mgmodel = mgmodel.half()
     elif args.bf16:
         mgmodel = mgmodel.bfloat16()
-
     if args.use_multi_token_prediction:
         file_path_160 = args.load+"/model-00160-of-000163.safetensors"
         file_path_161 = args.load + "/model-00161-of-000163.safetensors"
@@ -318,6 +317,7 @@ def convert_checkpoint_from_transformers_to_megatron(hfmodel, mgmodel, args):
             mtplayer.self_attention.linear_kv_up_proj.layer_norm_weight.copy_(mtp_dict["model.layers.61.self_attn.kv_a_layernorm.weight"])
             mtplayer.self_attention.linear_proj.weight.copy_(mtp_dict["model.layers.61.self_attn.o_proj.weight"])
             mtplayer.mlp.router.weight.copy_(mtp_dict["model.layers.61.mlp.gate.weight"])
+            mtplayer.mlp.router.expert_bias.copy_(mtp_dict["model.layers.61.mlp.gate.e_score_correction_bias"])
             for i in range(args.num_experts):
                 fc1_weight = torch.cat([mtp_dict["model.layers.61.mlp.experts."+str(i)+".gate_proj.weight"],
                                         mtp_dict["model.layers.61.mlp.experts."+str(i)+".up_proj.weight"]])
@@ -355,6 +355,7 @@ def convert_checkpoint_from_transformers_to_megatron(hfmodel, mgmodel, args):
                 mglayer.mlp.linear_fc2.weight.copy_(hflayer.mlp.down_proj.weight)
             else:
                 mglayer.mlp.router.weight.copy_(hflayer.mlp.gate.weight)
+                mglayer.mlp.router.expert_bias.copy_(hflayer.mlp.gate.e_score_correction_bias)
                 for i, hf_expert in enumerate(hflayer.mlp.experts):
                     fc1_weight = torch.cat([hf_expert.gate_proj.weight, hf_expert.up_proj.weight])
                     linear_fc1_weighti = getattr(mglayer.mlp.experts.linear_fc1, 'weight' + str(i))
@@ -420,7 +421,7 @@ def save_mgmodel(mgmodel, args):
             pp_layers_per_stage = [args.num_layers // args.pipeline_model_parallel_size] * args.pipeline_model_parallel_size
 
         for tp_rank in range(args.tensor_model_parallel_size):
-            for ep_rank in range(args.expert_model_parallel_size):
+            for ep_rank in range(tp_rank, args.expert_model_parallel_size, args.tensor_model_parallel_size):
                 for pp_rank in range(args.pipeline_model_parallel_size):
                     model_split = {}
                     layer_offset = sum(pp_layers_per_stage[:pp_rank])
@@ -444,9 +445,9 @@ def save_mgmodel(mgmodel, args):
                         if not isinstance(v, torch.Tensor):
                             target_v = v
                         elif 'linear_q_down_proj' in k or 'linear_kv_down_proj' in k:
-                            #seg = v.shape[0] // args.tensor_model_parallel_size
-                            #target_v = v[seg * tp_rank: seg * (tp_rank + 1)]
-                            target_v = v
+                            seg = v.shape[0] // args.tensor_model_parallel_size
+                            target_v = v[seg * tp_rank: seg * (tp_rank + 1)]
+                            #target_v = v
                         elif 'linear_q_up_proj.layer_norm_weight' in k or 'linear_kv_up_proj.layer_norm_weight' in k:
                             #seg = v.shape[0] // args.tensor_model_parallel_size
                             #target_v = v[seg * tp_rank: seg * (tp_rank + 1)]
@@ -505,7 +506,8 @@ def save_mgmodel(mgmodel, args):
                             if pp_rank == 0:
                                 model_split[k] = target_v
                         elif "mtp_embedding.word_embeddings" in k:
-                            model_split[k] = target_v
+                            if pp_rank == args.pipeline_model_parallel_size - 1:
+                                model_split[k] = target_v
                         elif "output_layer" in k or "final_layernorm" in k or "mtp_modules" in k:
                             if pp_rank == args.pipeline_model_parallel_size - 1:
                                 model_split[k] = target_v
