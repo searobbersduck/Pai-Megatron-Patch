@@ -7,4 +7,3 @@ Bigcode-Evaluation-Harness*
 
 examples/qwen2_vl/nsys_output
 examples/qwen2_vl/output_mcore_qwen2vl_pretrain
-*.log
