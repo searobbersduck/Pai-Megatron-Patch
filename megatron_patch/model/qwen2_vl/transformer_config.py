@@ -46,7 +46,7 @@ def get_vision_model_config(args, config):
     config.add_bias_linear = True # all nn.Linear has bias (MLP, attn)
     config.add_qkv_bias = True # qkv_proj in attn has bias
     # config.hidden_size = 1280 # embed_dim
-    config.hidden_size = 4096 # embed_dim
+    config.hidden_size = 1280 # embed_dim
     config.hidden_dropout = 0.0
     config.attention_dropout = 0.0
     config.ffn_hidden_size = config.hidden_size * 4 # embed_dim * mlp_ratio
