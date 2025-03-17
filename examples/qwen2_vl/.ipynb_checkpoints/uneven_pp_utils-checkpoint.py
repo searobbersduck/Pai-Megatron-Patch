@@ -150,7 +150,7 @@ if __name__ == '__main__':
     # llm_hidden_size = 3584
     
     # llm decoder parameters
-    decoder_seq_len = 2048
+    decoder_seq_len = 1024
     llm_hidden_size = 3584
     llm_intermediate_size = 18944
     llm_num_layers = 28
