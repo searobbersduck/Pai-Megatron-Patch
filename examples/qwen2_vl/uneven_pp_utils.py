@@ -106,8 +106,8 @@ if __name__ == '__main__':
     # case 2
     
     # vit encoder parameters
-    image_w = 336
-    image_h = 336
+    image_w = 224
+    image_h = 224
     image_in_channels = 3
     patch_size = 14
     vit_hidden_size = 4096
@@ -119,7 +119,7 @@ if __name__ == '__main__':
     # llm_hidden_size = 3584
     
     # llm decoder parameters
-    decoder_seq_len = 2048
+    decoder_seq_len = 1024
     llm_hidden_size = 3584
     llm_intermediate_size = 18944
     llm_num_layers = 28
