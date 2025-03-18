@@ -140,6 +140,17 @@ def memory_first_pp_rank_calculator(image_w, image_h, image_in_channels, patch_s
     return memory_llm_decoder_on_first_pp_rank
 
 
+def memory_other_pp_rank_calculator(decoder_seq_len, llm_num_layers, llm_hidden_size, llm_intermediate_size, num_layers_per_other_pp_stage, vocab_size, bs, tp=1):
+    memory_llm_decoder_on_other_pp_rank = num_layers_per_other_pp_stage * memory_per_transformer_layer_calculator_with_tp(llm_hidden_size, llm_intermediate_size, bs, decoder_seq_len, tp)
+    print('memory_llm_decoder_on_other_pp_rank:{:.3f} GB'.format(memory_llm_decoder_on_other_pp_rank/1e9))
+    return memory_llm_decoder_on_other_pp_rank
+
+
+def memory_last_pp_rank_calculator(decoder_seq_len, llm_num_layers, llm_hidden_size, llm_intermediate_size, num_layers_last_pp_stage, vocab_size, bs, tp=1):
+    memory_llm_decoder_on_last_pp_rank = num_layers_last_pp_stage * memory_per_transformer_layer_calculator_with_tp(llm_hidden_size, llm_intermediate_size, bs, decoder_seq_len, tp) + 16*vocab_size*llm_hidden_size/tp + 8*bs*decoder_seq_len*llm_hidden_size
+    print('memory_llm_decoder_on_last_pp_rank:{:.3f} GB'.format(memory_llm_decoder_on_last_pp_rank/1e9))
+    return memory_llm_decoder_on_last_pp_rank
+
 
 # -
 
@@ -256,17 +267,20 @@ if __name__ == '__main__':
     tp=1
 
     # llm decoder parameters
-    decoder_seq_len = 1024
+    decoder_seq_len = 2048
     llm_hidden_size = 3584
     llm_intermediate_size = 18944
     llm_num_layers = 28
 
     # uneven pp
     num_layers_first_pp_stage=10
+    vocab_size=32000
+    num_layers_last_pp_stage=18
 
     memory_vit_encoder_calculator(image_w, image_h, image_in_channels, patch_size, vit_num_layers, vit_hidden_size, vit_intermediate_size, bs, tp)
 
     memory_first_pp_rank = memory_first_pp_rank_calculator(image_w, image_h, image_in_channels, patch_size, vit_num_layers, vit_hidden_size, vit_intermediate_size, decoder_seq_len, llm_num_layers, llm_hidden_size, llm_intermediate_size, num_layers_first_pp_stage, bs, tp)
+    memory_last_pp_rank = memory_last_pp_rank_calculator(decoder_seq_len, llm_num_layers, llm_hidden_size, llm_intermediate_size, num_layers_last_pp_stage, vocab_size, bs, tp)
 
     # *********************************************************************************************
     # case 2: memory analysi, tp=2, pp2
