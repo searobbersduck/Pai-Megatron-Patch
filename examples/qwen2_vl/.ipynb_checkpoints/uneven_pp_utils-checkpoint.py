@@ -111,6 +111,9 @@ def memory_vit_encoder_calculator(image_w, image_h, image_in_channels, patch_siz
     # conv activation memory
     conv_act_memory = 2*image_w*image_h*image_in_channels*bs
     
+    W=image_w
+    H=image_h
+    P=patch_size
     N = ((W+P-1)//P) * ((H+P-1)//P)
     seq_len = N
     
@@ -293,6 +296,8 @@ if __name__ == '__main__':
     memory_vit_encoder_calculator(image_w, image_h, image_in_channels, patch_size, vit_num_layers, vit_hidden_size, vit_intermediate_size, bs, tp)
 
     memory_first_pp_rank = memory_first_pp_rank_calculator(image_w, image_h, image_in_channels, patch_size, vit_num_layers, vit_hidden_size, vit_intermediate_size, decoder_seq_len, llm_num_layers, llm_hidden_size, llm_intermediate_size, num_layers_first_pp_stage, bs, tp)
+
+
 
 
 
