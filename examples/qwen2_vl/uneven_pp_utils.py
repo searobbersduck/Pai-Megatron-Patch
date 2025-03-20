@@ -66,6 +66,25 @@ def uneven_pp_parameters_generator(image_w, image_h, image_in_channels, patch_si
 #     print('vit_encoder_tflops:', vit_encoder_tflops)
     return num_layers_first_pp_rank, num_layers_last_pp_rank
 
+# +
+
+
+# *********************************************************************************************
+# parameters calculator
+def parameters_calculator_vit_encoder(image_in_channels, patch_size, num_layers, hidden_size, intermediate_size):
+    # parameters
+    parameters_per_transformer_layer = (4*hidden_size*hidden_size + 2*hidden_size*intermediate_size) + (3*hidden_size + intermediate_size) + 6*hidden_size
+    # parameters conv
+    parameters_conv = patch_size*patch_size*image_in_channels*hidden_size
+    # parameters classifier head
+    parameters_classifier_head = 1000*hidden_size
+    # total
+    parameters = parameters_conv + parameters_per_transformer_layer * num_layers + parameters_classifier_head
+    
+    print('total parameters:\t{:.2f}'.format(parameters/1e6))
+    
+    return parameters
+
 
 # +
 # GPU memory analysis
@@ -186,6 +205,8 @@ if __name__ == '__main__':
     print('num_layers_first_pp_rank:', num_layers_first_pp_rank)
     print('num_layers_last_pp_rank:', num_layers_last_pp_rank)
     
+    vit_parameters = parameters_calculator_vit_encoder(image_in_channels, patch_size, vit_num_layers, vit_hidden_size, vit_intermediate_size)
+    
     # *********************************************************************************************
     # case 2
     
@@ -218,6 +239,8 @@ if __name__ == '__main__':
     print('num_layers_first_pp_rank:', num_layers_first_pp_rank)
     print('num_layers_last_pp_rank:', num_layers_last_pp_rank) 
     
+    vit_parameters = parameters_calculator_vit_encoder(image_in_channels, patch_size, vit_num_layers, vit_hidden_size, vit_intermediate_size)
+    
     # *********************************************************************************************
     # case 3
     # vit encoder parameters
@@ -249,6 +272,7 @@ if __name__ == '__main__':
     print('num_layers_first_pp_rank:', num_layers_first_pp_rank)
     print('num_layers_last_pp_rank:', num_layers_last_pp_rank) 
     
+    vit_parameters = parameters_calculator_vit_encoder(image_in_channels, patch_size, vit_num_layers, vit_hidden_size, vit_intermediate_size)
 
     # *********************************************************************************************
     # case 2: memory analysi, tp=1, pp2
@@ -267,7 +291,7 @@ if __name__ == '__main__':
     tp=1
 
     # llm decoder parameters
-    decoder_seq_len = 2048
+    decoder_seq_len = 1024
     llm_hidden_size = 3584
     llm_intermediate_size = 18944
     llm_num_layers = 28
@@ -293,7 +317,7 @@ if __name__ == '__main__':
     patch_size = 14
     vit_hidden_size = 4096
     vit_intermediate_size = vit_hidden_size*4
-    vit_num_layers = 28
+    vit_num_layers = 32
 
     bs=1
     tp=2
