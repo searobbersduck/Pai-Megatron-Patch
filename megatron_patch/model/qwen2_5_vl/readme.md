@@ -11,6 +11,7 @@
 - [ ] converter
     - [ ] huggingface convert to mcore
 - [ ] examples - pretrain qwen2.5 vl
+  - [ ] `examples/qwen2_vl/pretrain_qwen_2_5_vl.py`, todo: extracted to single folder.
 - [ ] convergence verification
 - [ ] datasets - video support 
 - [ ] video pretrain verification
