@@ -82,6 +82,13 @@ def get_patch_args(parser):
 
     patch_if_not_exist(
         group,
+        "--vision-tokens-per-second",
+        type=int,
+        default=2,
+    )
+
+    patch_if_not_exist(
+        group,
         "--spatial-merge-size",
         type=int,
         default=2,
