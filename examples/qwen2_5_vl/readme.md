@@ -4,6 +4,7 @@
 
 - [ ] Features
     - [x] window attention
+    - [ ] merger
     - [x] m-rope
     - [ ] other modules
     - [ ] configuration file for qwen2.5-vl
@@ -13,6 +14,7 @@
 - [ ] examples - pretrain qwen2.5 vl
   - [x] `examples/qwen2_vl/pretrain_qwen_2_5_vl.py`
   - [ ] todo: extracted to single folder.
+- [ ] readme for pretrain
 - [ ] convergence verification for no parallelism
 - [ ] parallelism support verification
   - [ ] tp

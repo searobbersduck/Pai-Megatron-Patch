@@ -136,71 +136,6 @@ class Qwen2_5_VLVisionBlock(TransformerBlock):
 
         return window_index, cu_window_seqlens
     
-    # def forward(
-    #     self,
-    #     hidden_states: Tensor,
-    #     grid_thw: torch.Tensor,
-    #     attention_mask: Tensor = None,
-    #     context: Tensor = None,
-    #     context_mask: Tensor = None,
-    #     rotary_pos_emb: Tensor = None,
-    #     rotary_pos_cos: Tensor = None,
-    #     rotary_pos_sin: Tensor = None,
-    #     attention_bias: Tensor = None,
-    #     inference_params: InferenceParams = None,
-    #     packed_seq_params: PackedSeqParams = None,
-    #     sequence_len_offset: Tensor = None,        
-    # ):
-    #     window_index, cu_window_seqlens = self.get_window_index(grid_thw)
-    #     cu_window_seqlens = torch.tensor(
-    #         cu_window_seqlens,
-    #         device=hidden_states.device,
-    #         dtype=grid_thw.dtype if torch.jit.is_tracing() else torch.int32,
-    #     )
-    #     cu_window_seqlens = torch.unique_consecutive(cu_window_seqlens)
-
-    #     # seq_len, _ = hidden_states.size()
-    #     seq_len = hidden_states.size()[0]
-    #     hidden_states = hidden_states.reshape(seq_len // self.spatial_merge_unit, self.spatial_merge_unit, -1)
-    #     hidden_states = hidden_states[window_index, :, :]
-    #     hidden_states = hidden_states.reshape(seq_len, -1)
-    #     rotary_pos_emb = rotary_pos_emb.reshape(seq_len // self.spatial_merge_unit, self.spatial_merge_unit, -1)
-    #     rotary_pos_emb = rotary_pos_emb[window_index, :, :]
-    #     rotary_pos_emb = rotary_pos_emb.reshape(seq_len, -1)
-    #     emb = torch.cat((rotary_pos_emb, rotary_pos_emb), dim=-1)
-    #     position_embeddings = (emb.cos(), emb.sin())
-
-    #     cu_seqlens = torch.repeat_interleave(grid_thw[:, 1] * grid_thw[:, 2], grid_thw[:, 0]).cumsum(
-    #         dim=0,
-    #         # Select dtype based on the following factors:
-    #         #  - FA2 requires that cu_seqlens_q must have dtype int32
-    #         #  - torch.onnx.export requires that cu_seqlens_q must have same dtype as grid_thw
-    #         # See https://github.com/huggingface/transformers/pull/34852 for more information
-    #         dtype=grid_thw.dtype if torch.jit.is_tracing() else torch.int32,
-    #     )
-    #     cu_seqlens = F.pad(cu_seqlens, (1, 0), value=0)
-        
-    #     for layer_num, blk in enumerate(self.layers):
-    #         if layer_num in self.fullatt_block_indexes:
-    #             cu_seqlens_now = cu_seqlens
-    #         else:
-    #             cu_seqlens_now = cu_window_seqlens
-    #         if self.gradient_checkpointing and self.training:
-    #             hidden_states = self._gradient_checkpointing_func(
-    #                 blk.__call__, hidden_states, cu_seqlens_now, None, position_embeddings
-    #             )
-    #         else:
-    #             # hidden_states = blk(hidden_states, cu_seqlens=cu_seqlens_now, position_embeddings=position_embeddings)
-    #             # window attention
-    #             # copied from https://github.com/huggingface/transformers/blob/ed95493ce05688447d15d9a82d2d70695290ecff/src/transformers/models/qwen2_5_vl/modeling_qwen2_5_vl.py#L300
-    #             xxx
-
-    #     hidden_states = self.merger(hidden_states)
-    #     reverse_indices = torch.argsort(window_index)
-    #     hidden_states = hidden_states[reverse_indices, :]   
-        
-    #     return hidden_states
-    
     def forward(
         self,
         hidden_states: Tensor,
@@ -403,6 +338,8 @@ class Qwen2_5_VLVisionBlock(TransformerBlock):
                     ):
                         hidden_states = self.group_prefetch_offload_commit_async(hidden_states)
 
+
+
         # Final layer norm.
         if self.final_layernorm is not None:
             hidden_states = self.final_layernorm(hidden_states)
@@ -413,8 +350,18 @@ class Qwen2_5_VLVisionBlock(TransformerBlock):
                 inp=hidden_states, requires_grad=True, keep_graph=True
             )
 
+        # todo: add merger module, maybe replace projection module
+        reverse_indices = torch.argsort(window_index)
+        # todo: shape is not match, will affect images output tokens
+        # todo: xxx
+        # todo: xxx
+        # todo: Important things should be said three times
+        hidden_states = hidden_states[reverse_indices, :]
+
         return hidden_states
         
+
+
     
 class Qwen2VisionModel(VisionModule):
     """Qwen2 ViT vision model, adapted from CLIPViTModel to support Naive Dynamic Resolution.
