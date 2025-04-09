@@ -18,6 +18,9 @@ from megatron.core.transformer import TransformerConfig
 from megatron.training.activations import quick_gelu
 from megatron.core import parallel_state
 
+from typing import Callable, List, Optional, Tuple, Union
+import torch.nn.functional as F
+
 @dataclass
 class Qwen2VLTransformerConfig(TransformerConfig):
 
@@ -32,6 +35,10 @@ class Qwen2VLTransformerConfig(TransformerConfig):
     # in the script
     # add_bias_linear = False
     # add_qkv_bias = True
+    
+    # add for qwen2.5-vl RMSNorm
+    normalization: str = 'RMSNorm'
+    activation_func: Callable = F.silu
     
 
 
@@ -69,6 +76,11 @@ def get_vision_model_config(args, config):
     config.patch_size = 14
     config.in_channels = 3
     config.spatial_merge_size = 2
+    
+    # for qwen2.5-vl special
+    config.window_attention_size = 112
+    config.fullatt_block_indexes = [7, 15, 23, 31]
+    
     return config
 
 

@@ -56,42 +56,16 @@ class VisionRotaryEmbedding(nn.Module):
         seq = torch.arange(seqlen, device=self.inv_freq.device, dtype=self.inv_freq.dtype)
         freqs = torch.outer(seq, self.inv_freq)
         return freqs.float()
-
-# copied from 
-# class Qwen2_5_VLVisionBlock(nn.Module):
-#     def __init__(self, config, attn_implementation: str = "sdpa") -> None:
-#         super().__init__()
-#         self.norm1 = Qwen2RMSNorm(config.hidden_size, eps=1e-6)
-#         self.norm2 = Qwen2RMSNorm(config.hidden_size, eps=1e-6)
-#         self.attn = QWEN2_5_VL_VISION_ATTENTION_CLASSES[attn_implementation](
-#             config.hidden_size, num_heads=config.num_heads
-#         )
-#         self.mlp = Qwen2_5_VLMLP(config, bias=True)
-
-#     def forward(
-#         self,
-#         hidden_states: torch.Tensor,
-#         cu_seqlens: torch.Tensor,
-#         rotary_pos_emb: Optional[torch.Tensor] = None,
-#         position_embeddings: Optional[Tuple[torch.Tensor, torch.Tensor]] = None,
-#     ) -> torch.Tensor:
-#         hidden_states = hidden_states + self.attn(
-#             self.norm1(hidden_states),
-#             cu_seqlens=cu_seqlens,
-#             rotary_pos_emb=rotary_pos_emb,
-#             position_embeddings=position_embeddings,
-#         )
-#         hidden_states = hidden_states + self.mlp(self.norm2(hidden_states))
-#         return hidden_states
+    
     
 class Qwen2_5_VLVisionBlock(TransformerBlock):
     def __init__(self, config, spec, post_layer_norm = True, pre_process = True, post_process = True):
         super().__init__(config, spec, post_layer_norm, pre_process, post_process)
-        self.window_size = 112
-        self.spatial_merge_size = 2
-        self.patch_size = 14
+        self.window_size = config.window_attention_size
+        self.spatial_merge_size = config.spatial_merge_size
+        self.patch_size = config.patch_size
         self.spatial_merge_unit = self.spatial_merge_size * self.spatial_merge_size
-        self.fullatt_block_indexes = [8]
+        self.fullatt_block_indexes = config.fullatt_block_indexes
         self.gradient_checkpointing = False
 
     # copy from https://github.com/huggingface/transformers/blob/ed95493ce05688447d15d9a82d2d70695290ecff/src/transformers/models/qwen2_5_vl/modeling_qwen2_5_vl.py#L454
@@ -250,8 +224,8 @@ class Qwen2_5_VLVisionBlock(TransformerBlock):
         rotary_pos_emb = rotary_pos_emb.reshape(seq_len // self.spatial_merge_unit, self.spatial_merge_unit, bs, 1, -1)
         rotary_pos_emb = rotary_pos_emb[window_index, :, :, :, :]
         rotary_pos_emb = rotary_pos_emb.reshape(seq_len, bs, 1, -1)
-        emb = torch.cat((rotary_pos_emb, rotary_pos_emb), dim=-1)
-        position_embeddings = (emb.cos(), emb.sin())
+        # emb = torch.cat((rotary_pos_emb, rotary_pos_emb), dim=-1)
+        # position_embeddings = (emb.cos(), emb.sin())
 
         cu_seqlens = torch.repeat_interleave(grid_thw[:, 1] * grid_thw[:, 2], grid_thw[:, 0]).cumsum(
             dim=0,
@@ -261,12 +235,7 @@ class Qwen2_5_VLVisionBlock(TransformerBlock):
             # See https://github.com/huggingface/transformers/pull/34852 for more information
             dtype=grid_thw.dtype if torch.jit.is_tracing() else torch.int32,
         )
-        cu_seqlens = F.pad(cu_seqlens, (1, 0), value=0)
-        
-        # seq_length = seq_len
-        # attention_mask = torch.zeros([1, seq_length, seq_length], device=hidden_states.device, dtype=torch.bool)
-        # for i in range(1, len(cu_seqlens)):
-        #     attention_mask[..., cu_seqlens[i - 1] : cu_seqlens[i], cu_seqlens[i - 1] : cu_seqlens[i]] = True        
+        cu_seqlens = F.pad(cu_seqlens, (1, 0), value=0)     
 
         with rng_context, fp8_context:
             # Forward pass.
@@ -281,19 +250,39 @@ class Qwen2_5_VLVisionBlock(TransformerBlock):
                     packed_seq_params=packed_seq_params,
                 )
             else:
+                # generate window attention mask
+                seq_length = seq_len
+                # if l_no in self.fullatt_block_indexes:
+                #     cu_seqlens_now = cu_seqlens
+                # else:
+                #     cu_seqlens_now = cu_window_seqlens                            
+                window_attention_mask = torch.zeros([1, seq_length, seq_length], device=hidden_states.device, dtype=torch.bool)
+                for i in range(1, len(cu_window_seqlens)):
+                    window_attention_mask[..., cu_window_seqlens[i - 1] : cu_window_seqlens[i], cu_window_seqlens[i - 1] : cu_window_seqlens[i]] = True
+                
+                full_attention_mask = torch.zeros([1, seq_length, seq_length], device=hidden_states.device, dtype=torch.bool)
+                for i in range(1, len(cu_seqlens)):
+                    full_attention_mask[..., cu_seqlens[i - 1] : cu_seqlens[i], cu_seqlens[i - 1] : cu_seqlens[i]] = True
+                    
                 for l_no, layer in enumerate(self.layers):
                     with self.offload_context:
                         layer.use_cudagraph = True
                         if (len(self.cuda_graphs) == 0) or (not self.training):
-                            # generate window attention mask
-                            seq_length = seq_len
+                            # # generate window attention mask
+                            # seq_length = seq_len
+                            # if l_no in self.fullatt_block_indexes:
+                            #     cu_seqlens_now = cu_seqlens
+                            # else:
+                            #     cu_seqlens_now = cu_window_seqlens                            
+                            # attention_mask = torch.zeros([1, seq_length, seq_length], device=hidden_states.device, dtype=torch.bool)
+                            # for i in range(1, len(cu_seqlens_now)):
+                            #     attention_mask[..., cu_seqlens_now[i - 1] : cu_seqlens_now[i], cu_seqlens_now[i - 1] : cu_seqlens_now[i]] = True                              
+                            
                             if l_no in self.fullatt_block_indexes:
-                                cu_seqlens_now = cu_seqlens
+                                attention_mask = full_attention_mask
                             else:
-                                cu_seqlens_now = cu_window_seqlens                            
-                            attention_mask = torch.zeros([1, seq_length, seq_length], device=hidden_states.device, dtype=torch.bool)
-                            for i in range(1, len(cu_seqlens_now)):
-                                attention_mask[..., cu_seqlens_now[i - 1] : cu_seqlens_now[i], cu_seqlens_now[i - 1] : cu_seqlens_now[i]] = True                              
+                                attention_mask = window_attention_mask
+                            
                             hidden_states, context = layer(
                                 hidden_states=hidden_states,
                                 attention_mask=attention_mask,
@@ -356,7 +345,9 @@ class Qwen2_5_VLVisionBlock(TransformerBlock):
         # todo: xxx
         # todo: xxx
         # todo: Important things should be said three times
+        hidden_states = hidden_states.reshape(seq_len // self.spatial_merge_unit, self.spatial_merge_unit, bs, -1)
         hidden_states = hidden_states[reverse_indices, :]
+        hidden_states = hidden_states.reshape(seq_len, bs, -1)
 
         return hidden_states
         
