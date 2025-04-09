@@ -2,7 +2,7 @@
 
 ## task
 
-- [ ] Features
+- [x] Features: [qwen2.5-lv model implementation](../../megatron_patch/model/qwen2_5_vl)
     - [x] window attention
       - [ ] test window attention performance
     - [x] merger
@@ -16,7 +16,7 @@
     - [x] add new parameters in configuration file for qwen2.5-vl
     - [x] load params from configuration file
 - [x] examples - pretrain qwen2.5 vl
-  - [x] `examples/qwen2_vl/pretrain_qwen_2_5_vl.py`
+  - [x] [pretrain_qwen_2_5_vl.py](examples/qwen2_vl/pretrain_qwen_2_5_vl.py)
   - [x] pretrain script: [run_mcore_qwen_h800.sh](./run_mcore_qwen_h800.sh)
   - [x] invoke script: [run_mcore_qwen_h800_args.sh](./run_mcore_qwen_h800_args.sh)
 - [ ] readme for pretrain
