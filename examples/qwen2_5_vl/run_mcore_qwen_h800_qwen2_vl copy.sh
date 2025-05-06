@@ -48,8 +48,10 @@ DISTRIBUTED_ARGS="--nproc_per_node $GPUS_PER_NODE --nnodes $NNODES --node_rank $
 MODEL_SIZE=$2
 BATCH_SIZE=$3
 GLOBAL_BATCH_SIZE=$4
-LR=$5
-MIN_LR=$6
+# LR=$5
+# MIN_LR=$6
+LR=2e-6
+MIN_LR=0
 SEQ_LEN=$7
 PAD_LEN=$8
 PR=$9
@@ -316,7 +318,6 @@ megatron_options="  \
         --no-save-optim \
         --disable-vision-class-token \
         --dataloader-type external \
-        --freeze-ViT \
         --transformer-impl transformer_engine \
         --ckpt-format torch \
         "

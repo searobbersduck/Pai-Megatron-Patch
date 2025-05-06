@@ -16,10 +16,10 @@ false \
 true   \
 false \
 false \
-100000  \
+1000000  \
 /workspace/data/mm/LLaVA-Pretrain/wds   \
 /workspace/data/mm/LLaVA-Pretrain/wds   \
 /workspace/data/mm/qwen2-vl-ckpts/Qwen2-VL-2B-Instruct \
-20000  \
+200000  \
 200   \
 ./output_mcore_qwen2vl_pretrain

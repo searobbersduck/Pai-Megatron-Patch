@@ -89,7 +89,7 @@ def parameters_calculator_vit_encoder(image_in_channels, patch_size, num_layers,
 # +
 # GPU memory analysis
 
-def memory_per_transformer_layer_calculator_with_tp(hidden_size, intermediate_size, bs, seq_len, tp=1):
+def memory_per_transformer_layer_calculator_with_tp(hidden_size, intermediate_size, bs, seq_len, tp=1, fp8=False):
     # ref: https://zhuanlan.zhihu.com/p/19689239934
     # q,k,v projector
     # (h*h)*3 + 3*h/tp
@@ -115,7 +115,11 @@ def memory_per_transformer_layer_calculator_with_tp(hidden_size, intermediate_si
     static_memory = 16 * parameters_per_transformer_layer
     
     # activation memory
-    act_memory = bs * seq_len * (18*hidden_size+2*2*intermediate_size)/tp
+    # ref: https://nvidia-my.sharepoint.com/:p:/p/xueh/EQ8ZCgcmONpCjfMw9YZcBfsB31BAFcL1pX9oMS_DAIKn9A?e=jGhw3Z&nav=eyJzSWQiOjU1MDE0NTMwNCwiY0lkIjoxNjYxMzc2MjUyfQ
+    if not fp8:
+        act_memory = bs * seq_len * (18*hidden_size+2*2*intermediate_size)/tp
+    else:
+        act_memory = bs * seq_len * (15*hidden_size+(2+1)*intermediate_size)/tp
     
     # total memory
     total_memory = static_memory + act_memory
@@ -123,7 +127,7 @@ def memory_per_transformer_layer_calculator_with_tp(hidden_size, intermediate_si
     return total_memory
 
 
-def memory_vit_encoder_calculator(image_w, image_h, image_in_channels, patch_size, num_layers, hidden_size, intermediate_size, bs, tp=1):
+def memory_vit_encoder_calculator(image_w, image_h, image_in_channels, patch_size, num_layers, hidden_size, intermediate_size, bs, tp=1, fp8=False):
     # conv static memory
     conv_static_memory = 16*patch_size*patch_size*image_in_channels*hidden_size*bs
     
@@ -137,7 +141,7 @@ def memory_vit_encoder_calculator(image_w, image_h, image_in_channels, patch_siz
     seq_len = N
     
     # transformer block total memory
-    transformer_block_total_memory = num_layers * memory_per_transformer_layer_calculator_with_tp(hidden_size, intermediate_size, bs, seq_len, tp)
+    transformer_block_total_memory = num_layers * memory_per_transformer_layer_calculator_with_tp(hidden_size, intermediate_size, bs, seq_len, tp, fp8)
     
     total_vit_memory = conv_static_memory + conv_act_memory + transformer_block_total_memory
     return total_vit_memory
@@ -146,10 +150,10 @@ def memory_mlp_adaptor_caculator():
     return 0
 
 def memory_first_pp_rank_calculator(image_w, image_h, image_in_channels, patch_size, vit_num_layers, vit_hidden_size, vit_intermediate_size, 
-              decoder_seq_len, llm_num_layers, llm_hidden_size, llm_intermediate_size, num_layers_first_pp_stage, bs, tp=1):
-    total_memory_vit_encoder = memory_vit_encoder_calculator(image_w, image_h, image_in_channels, patch_size, vit_num_layers, vit_hidden_size, vit_intermediate_size, bs, tp)
+              decoder_seq_len, llm_num_layers, llm_hidden_size, llm_intermediate_size, num_layers_first_pp_stage, bs, tp=1, fp8=False):
+    total_memory_vit_encoder = memory_vit_encoder_calculator(image_w, image_h, image_in_channels, patch_size, vit_num_layers, vit_hidden_size, vit_intermediate_size, bs, tp, fp8)
     print('total_memory_vit_encoder:{:.3f} GB'.format(total_memory_vit_encoder/1e9))
-    memory_llm_decoder_on_first_pp_rank = num_layers_first_pp_stage * memory_per_transformer_layer_calculator_with_tp(llm_hidden_size, llm_intermediate_size, bs, decoder_seq_len, tp)
+    memory_llm_decoder_on_first_pp_rank = num_layers_first_pp_stage * memory_per_transformer_layer_calculator_with_tp(llm_hidden_size, llm_intermediate_size, bs, decoder_seq_len, tp, fp8)
     print('memory_llm_decoder_on_first_pp_rank:{:.3f} GB'.format(memory_llm_decoder_on_first_pp_rank/1e9))
     
     total_memory = total_memory_vit_encoder + memory_llm_decoder_on_first_pp_rank
@@ -159,14 +163,14 @@ def memory_first_pp_rank_calculator(image_w, image_h, image_in_channels, patch_s
     return memory_llm_decoder_on_first_pp_rank
 
 
-def memory_other_pp_rank_calculator(decoder_seq_len, llm_num_layers, llm_hidden_size, llm_intermediate_size, num_layers_per_other_pp_stage, vocab_size, bs, tp=1):
-    memory_llm_decoder_on_other_pp_rank = num_layers_per_other_pp_stage * memory_per_transformer_layer_calculator_with_tp(llm_hidden_size, llm_intermediate_size, bs, decoder_seq_len, tp)
+def memory_other_pp_rank_calculator(decoder_seq_len, llm_num_layers, llm_hidden_size, llm_intermediate_size, num_layers_per_other_pp_stage, vocab_size, bs, tp=1, fp8=False):
+    memory_llm_decoder_on_other_pp_rank = num_layers_per_other_pp_stage * memory_per_transformer_layer_calculator_with_tp(llm_hidden_size, llm_intermediate_size, bs, decoder_seq_len, tp, fp8)
     print('memory_llm_decoder_on_other_pp_rank:{:.3f} GB'.format(memory_llm_decoder_on_other_pp_rank/1e9))
     return memory_llm_decoder_on_other_pp_rank
 
 
-def memory_last_pp_rank_calculator(decoder_seq_len, llm_num_layers, llm_hidden_size, llm_intermediate_size, num_layers_last_pp_stage, vocab_size, bs, tp=1):
-    memory_llm_decoder_on_last_pp_rank = num_layers_last_pp_stage * memory_per_transformer_layer_calculator_with_tp(llm_hidden_size, llm_intermediate_size, bs, decoder_seq_len, tp) + 16*vocab_size*llm_hidden_size/tp + 8*bs*decoder_seq_len*llm_hidden_size
+def memory_last_pp_rank_calculator(decoder_seq_len, llm_num_layers, llm_hidden_size, llm_intermediate_size, num_layers_last_pp_stage, vocab_size, bs, tp=1, fp8=False):
+    memory_llm_decoder_on_last_pp_rank = num_layers_last_pp_stage * memory_per_transformer_layer_calculator_with_tp(llm_hidden_size, llm_intermediate_size, bs, decoder_seq_len, tp, fp8) + 16*vocab_size*llm_hidden_size/tp + 8*bs*decoder_seq_len*llm_hidden_size
     print('memory_llm_decoder_on_last_pp_rank:{:.3f} GB'.format(memory_llm_decoder_on_last_pp_rank/1e9))
     return memory_llm_decoder_on_last_pp_rank
 
@@ -275,9 +279,9 @@ if __name__ == '__main__':
     vit_parameters = parameters_calculator_vit_encoder(image_in_channels, patch_size, vit_num_layers, vit_hidden_size, vit_intermediate_size)
 
     # *********************************************************************************************
-    # case 2: memory analysi, tp=1, pp2
+    # case 2: memory analysis, tp=1, pp2
     
-    print('\ncase 2: memory analysi, tp=2, pp2')
+    print('\ncase 2: memory analysis, tp=2, pp2')
     # vit encoder parameters
     image_w = 224
     image_h = 224
@@ -307,9 +311,9 @@ if __name__ == '__main__':
     memory_last_pp_rank = memory_last_pp_rank_calculator(decoder_seq_len, llm_num_layers, llm_hidden_size, llm_intermediate_size, num_layers_last_pp_stage, vocab_size, bs, tp)
 
     # *********************************************************************************************
-    # case 2: memory analysi, tp=2, pp2
+    # case 2: memory analysis, tp=2, pp2
     
-    print('\ncase 2: memory analysi, tp=2, pp1')
+    print('\ncase 2: memory analysis, tp=2, pp1')
     # vit encoder parameters
     image_w = 224
     image_h = 224
@@ -334,6 +338,36 @@ if __name__ == '__main__':
     memory_vit_encoder_calculator(image_w, image_h, image_in_channels, patch_size, vit_num_layers, vit_hidden_size, vit_intermediate_size, bs, tp)
 
     memory_first_pp_rank = memory_first_pp_rank_calculator(image_w, image_h, image_in_channels, patch_size, vit_num_layers, vit_hidden_size, vit_intermediate_size, decoder_seq_len, llm_num_layers, llm_hidden_size, llm_intermediate_size, num_layers_first_pp_stage, bs, tp)
+    
+    
+    # *********************************************************************************************
+    # case 2: memory analysis, tp=2, pp2
+    
+    print('\ncase 2: memory analysis (fp8 enabled), tp=2, pp1')
+    # vit encoder parameters
+    image_w = 224
+    image_h = 224
+    image_in_channels = 3
+    patch_size = 14
+    vit_hidden_size = 4096
+    vit_intermediate_size = vit_hidden_size*4
+    vit_num_layers = 32
+
+    bs=1
+    tp=2
+
+    # llm decoder parameters
+    decoder_seq_len = 1024
+    llm_hidden_size = 3584
+    llm_intermediate_size = 18944
+    llm_num_layers = 28
+
+    # uneven pp
+    num_layers_first_pp_stage=10
+
+    memory_vit_encoder_calculator(image_w, image_h, image_in_channels, patch_size, vit_num_layers, vit_hidden_size, vit_intermediate_size, bs, tp, True)
+
+    memory_first_pp_rank = memory_first_pp_rank_calculator(image_w, image_h, image_in_channels, patch_size, vit_num_layers, vit_hidden_size, vit_intermediate_size, decoder_seq_len, llm_num_layers, llm_hidden_size, llm_intermediate_size, num_layers_first_pp_stage, bs, tp, True)
 
 
 
