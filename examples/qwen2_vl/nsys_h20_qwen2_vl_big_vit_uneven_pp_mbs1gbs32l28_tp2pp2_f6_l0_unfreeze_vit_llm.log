@@ -1,0 +1,174 @@
+W0506 10:29:49.147000 2616 torch/distributed/run.py:792] 
+W0506 10:29:49.147000 2616 torch/distributed/run.py:792] *****************************************
+W0506 10:29:49.147000 2616 torch/distributed/run.py:792] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0506 10:29:49.147000 2616 torch/distributed/run.py:792] *****************************************
+No CUDA runtime is found, using CUDA_HOME='/usr/local/cuda'
+No CUDA runtime is found, using CUDA_HOME='/usr/local/cuda'
+No CUDA runtime is found, using CUDA_HOME='/usr/local/cuda'
+No CUDA runtime is found, using CUDA_HOME='/usr/local/cuda'
+/usr/local/lib/python3.12/dist-packages/modelopt/torch/utils/import_utils.py:25: UserWarning: Failed to import transformers plugin due to: ImportError("tokenizers>=0.21,<0.22 is required for a normal functioning of this module, but found tokenizers==0.20.3.\nTry: `pip install transformers -U` or `pip install -e '.[dev]'` if you're working with git main")
+  warnings.warn(f"Failed to import {plugin_name} plugin due to: {repr(e)}")
+/usr/local/lib/python3.12/dist-packages/modelopt/torch/utils/import_utils.py:25: UserWarning: Failed to import transformers plugin due to: ImportError("tokenizers>=0.21,<0.22 is required for a normal functioning of this module, but found tokenizers==0.20.3.\nTry: `pip install transformers -U` or `pip install -e '.[dev]'` if you're working with git main")
+  warnings.warn(f"Failed to import {plugin_name} plugin due to: {repr(e)}")
+/usr/local/lib/python3.12/dist-packages/modelopt/torch/utils/import_utils.py:25: UserWarning: Failed to import peft plugin due to: ImportError("tokenizers>=0.21,<0.22 is required for a normal functioning of this module, but found tokenizers==0.20.3.\nTry: `pip install transformers -U` or `pip install -e '.[dev]'` if you're working with git main")
+  warnings.warn(f"Failed to import {plugin_name} plugin due to: {repr(e)}")
+/usr/local/lib/python3.12/dist-packages/modelopt/torch/utils/import_utils.py:25: UserWarning: Failed to import peft plugin due to: ImportError("tokenizers>=0.21,<0.22 is required for a normal functioning of this module, but found tokenizers==0.20.3.\nTry: `pip install transformers -U` or `pip install -e '.[dev]'` if you're working with git main")
+  warnings.warn(f"Failed to import {plugin_name} plugin due to: {repr(e)}")
+/usr/local/lib/python3.12/dist-packages/modelopt/torch/utils/import_utils.py:25: UserWarning: Failed to import transformers plugin due to: ImportError("tokenizers>=0.21,<0.22 is required for a normal functioning of this module, but found tokenizers==0.20.3.\nTry: `pip install transformers -U` or `pip install -e '.[dev]'` if you're working with git main")
+  warnings.warn(f"Failed to import {plugin_name} plugin due to: {repr(e)}")
+/usr/local/lib/python3.12/dist-packages/modelopt/torch/utils/import_utils.py:25: UserWarning: Failed to import transformers plugin due to: ImportError("tokenizers>=0.21,<0.22 is required for a normal functioning of this module, but found tokenizers==0.20.3.\nTry: `pip install transformers -U` or `pip install -e '.[dev]'` if you're working with git main")
+  warnings.warn(f"Failed to import {plugin_name} plugin due to: {repr(e)}")
+/usr/local/lib/python3.12/dist-packages/modelopt/torch/utils/import_utils.py:25: UserWarning: Failed to import peft plugin due to: ImportError("tokenizers>=0.21,<0.22 is required for a normal functioning of this module, but found tokenizers==0.20.3.\nTry: `pip install transformers -U` or `pip install -e '.[dev]'` if you're working with git main")
+  warnings.warn(f"Failed to import {plugin_name} plugin due to: {repr(e)}")
+/usr/local/lib/python3.12/dist-packages/modelopt/torch/utils/import_utils.py:25: UserWarning: Failed to import peft plugin due to: ImportError("tokenizers>=0.21,<0.22 is required for a normal functioning of this module, but found tokenizers==0.20.3.\nTry: `pip install transformers -U` or `pip install -e '.[dev]'` if you're working with git main")
+  warnings.warn(f"Failed to import {plugin_name} plugin due to: {repr(e)}")
+/usr/local/lib/python3.12/dist-packages/modelopt/torch/utils/import_utils.py:25: UserWarning: Failed to import transformers plugin due to: ImportError("tokenizers>=0.21,<0.22 is required for a normal functioning of this module, but found tokenizers==0.20.3.\nTry: `pip install transformers -U` or `pip install -e '.[dev]'` if you're working with git main")
+  warnings.warn(f"Failed to import {plugin_name} plugin due to: {repr(e)}")
+/usr/local/lib/python3.12/dist-packages/modelopt/torch/utils/import_utils.py:25: UserWarning: Failed to import transformers plugin due to: ImportError("tokenizers>=0.21,<0.22 is required for a normal functioning of this module, but found tokenizers==0.20.3.\nTry: `pip install transformers -U` or `pip install -e '.[dev]'` if you're working with git main")
+  warnings.warn(f"Failed to import {plugin_name} plugin due to: {repr(e)}")
+/usr/local/lib/python3.12/dist-packages/modelopt/torch/utils/import_utils.py:25: UserWarning: Failed to import transformers plugin due to: ImportError("tokenizers>=0.21,<0.22 is required for a normal functioning of this module, but found tokenizers==0.20.3.\nTry: `pip install transformers -U` or `pip install -e '.[dev]'` if you're working with git main")
+  warnings.warn(f"Failed to import {plugin_name} plugin due to: {repr(e)}")
+/usr/local/lib/python3.12/dist-packages/modelopt/torch/utils/import_utils.py:25: UserWarning: Failed to import transformers plugin due to: ImportError("tokenizers>=0.21,<0.22 is required for a normal functioning of this module, but found tokenizers==0.20.3.\nTry: `pip install transformers -U` or `pip install -e '.[dev]'` if you're working with git main")
+  warnings.warn(f"Failed to import {plugin_name} plugin due to: {repr(e)}")
+/usr/local/lib/python3.12/dist-packages/modelopt/torch/utils/import_utils.py:25: UserWarning: Failed to import huggingface plugin due to: ImportError("tokenizers>=0.21,<0.22 is required for a normal functioning of this module, but found tokenizers==0.20.3.\nTry: `pip install transformers -U` or `pip install -e '.[dev]'` if you're working with git main")
+  warnings.warn(f"Failed to import {plugin_name} plugin due to: {repr(e)}")
+/usr/local/lib/python3.12/dist-packages/modelopt/torch/utils/import_utils.py:25: UserWarning: Failed to import huggingface plugin due to: ImportError("tokenizers>=0.21,<0.22 is required for a normal functioning of this module, but found tokenizers==0.20.3.\nTry: `pip install transformers -U` or `pip install -e '.[dev]'` if you're working with git main")
+  warnings.warn(f"Failed to import {plugin_name} plugin due to: {repr(e)}")
+/usr/local/lib/python3.12/dist-packages/modelopt/torch/utils/import_utils.py:25: UserWarning: Failed to import peft plugin due to: ImportError("tokenizers>=0.21,<0.22 is required for a normal functioning of this module, but found tokenizers==0.20.3.\nTry: `pip install transformers -U` or `pip install -e '.[dev]'` if you're working with git main")
+  warnings.warn(f"Failed to import {plugin_name} plugin due to: {repr(e)}")
+/usr/local/lib/python3.12/dist-packages/modelopt/torch/utils/import_utils.py:25: UserWarning: Failed to import peft plugin due to: ImportError("tokenizers>=0.21,<0.22 is required for a normal functioning of this module, but found tokenizers==0.20.3.\nTry: `pip install transformers -U` or `pip install -e '.[dev]'` if you're working with git main")
+  warnings.warn(f"Failed to import {plugin_name} plugin due to: {repr(e)}")
+Traceback (most recent call last):
+  File "/workspace/code/llm/pai-megatron-patch-branch/Pai-Megatron-Patch/examples/qwen2_vl/pretrain_qwen.py", line 44, in <module>
+    from megatron_patch.tokenizer import build_tokenizer, get_tokenizer
+  File "/workspace/code/llm/pai-megatron-patch-branch/Pai-Megatron-Patch/megatron_patch/tokenizer/__init__.py", line 15, in <module>
+    from transformers import AutoTokenizer
+  File "/usr/local/lib/python3.12/dist-packages/transformers/__init__.py", line 26, in <module>
+    from . import dependency_versions_check
+  File "/usr/local/lib/python3.12/dist-packages/transformers/dependency_versions_check.py", line 57, in <module>
+    require_version_core(deps[pkg])
+  File "/usr/local/lib/python3.12/dist-packages/transformers/utils/versions.py", line 117, in require_version_core
+Traceback (most recent call last):
+  File "/workspace/code/llm/pai-megatron-patch-branch/Pai-Megatron-Patch/examples/qwen2_vl/pretrain_qwen.py", line 44, in <module>
+    from megatron_patch.tokenizer import build_tokenizer, get_tokenizer
+  File "/workspace/code/llm/pai-megatron-patch-branch/Pai-Megatron-Patch/megatron_patch/tokenizer/__init__.py", line 15, in <module>
+    return require_version(requirement, hint)
+    from transformers import AutoTokenizer
+        File "/usr/local/lib/python3.12/dist-packages/transformers/__init__.py", line 26, in <module>
+     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/transformers/utils/versions.py", line 111, in require_version
+    from . import dependency_versions_check
+  File "/usr/local/lib/python3.12/dist-packages/transformers/dependency_versions_check.py", line 57, in <module>
+    _compare_versions(op, got_ver, want_ver, requirement, pkg, hint)
+    require_version_core(deps[pkg])
+  File "/usr/local/lib/python3.12/dist-packages/transformers/utils/versions.py", line 44, in _compare_versions
+  File "/usr/local/lib/python3.12/dist-packages/transformers/utils/versions.py", line 117, in require_version_core
+    raise ImportError(
+ImportError: tokenizers>=0.21,<0.22 is required for a normal functioning of this module, but found tokenizers==0.20.3.
+Try: `pip install transformers -U` or `pip install -e '.[dev]'` if you're working with git main
+    return require_version(requirement, hint)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/transformers/utils/versions.py", line 111, in require_version
+    _compare_versions(op, got_ver, want_ver, requirement, pkg, hint)
+  File "/usr/local/lib/python3.12/dist-packages/transformers/utils/versions.py", line 44, in _compare_versions
+    raise ImportError(
+ImportError: tokenizers>=0.21,<0.22 is required for a normal functioning of this module, but found tokenizers==0.20.3.
+Try: `pip install transformers -U` or `pip install -e '.[dev]'` if you're working with git main
+/usr/lib/python3.12/tempfile.py:1075: ResourceWarning: Implicitly cleaning up <TemporaryDirectory '/tmp/tmpfnjvxspo'>
+  _warnings.warn(warn_message, ResourceWarning)
+/usr/lib/python3.12/tempfile.py:1075: ResourceWarning: Implicitly cleaning up <TemporaryDirectory '/tmp/tmp04n9vskr'>
+  _warnings.warn(warn_message, ResourceWarning)
+/usr/local/lib/python3.12/dist-packages/modelopt/torch/utils/import_utils.py:25: UserWarning: Failed to import huggingface plugin due to: ImportError("tokenizers>=0.21,<0.22 is required for a normal functioning of this module, but found tokenizers==0.20.3.\nTry: `pip install transformers -U` or `pip install -e '.[dev]'` if you're working with git main")
+  warnings.warn(f"Failed to import {plugin_name} plugin due to: {repr(e)}")
+/usr/local/lib/python3.12/dist-packages/modelopt/torch/utils/import_utils.py:25: UserWarning: Failed to import huggingface plugin due to: ImportError("tokenizers>=0.21,<0.22 is required for a normal functioning of this module, but found tokenizers==0.20.3.\nTry: `pip install transformers -U` or `pip install -e '.[dev]'` if you're working with git main")
+  warnings.warn(f"Failed to import {plugin_name} plugin due to: {repr(e)}")
+/usr/local/lib/python3.12/dist-packages/modelopt/torch/utils/import_utils.py:25: UserWarning: Failed to import peft plugin due to: ImportError("tokenizers>=0.21,<0.22 is required for a normal functioning of this module, but found tokenizers==0.20.3.\nTry: `pip install transformers -U` or `pip install -e '.[dev]'` if you're working with git main")
+  warnings.warn(f"Failed to import {plugin_name} plugin due to: {repr(e)}")
+/usr/local/lib/python3.12/dist-packages/modelopt/torch/utils/import_utils.py:25: UserWarning: Failed to import peft plugin due to: ImportError("tokenizers>=0.21,<0.22 is required for a normal functioning of this module, but found tokenizers==0.20.3.\nTry: `pip install transformers -U` or `pip install -e '.[dev]'` if you're working with git main")
+  warnings.warn(f"Failed to import {plugin_name} plugin due to: {repr(e)}")
+Traceback (most recent call last):
+  File "/workspace/code/llm/pai-megatron-patch-branch/Pai-Megatron-Patch/examples/qwen2_vl/pretrain_qwen.py", line 44, in <module>
+    from megatron_patch.tokenizer import build_tokenizer, get_tokenizer
+  File "/workspace/code/llm/pai-megatron-patch-branch/Pai-Megatron-Patch/megatron_patch/tokenizer/__init__.py", line 15, in <module>
+    from transformers import AutoTokenizer
+  File "/usr/local/lib/python3.12/dist-packages/transformers/__init__.py", line 26, in <module>
+    from . import dependency_versions_check
+  File "/usr/local/lib/python3.12/dist-packages/transformers/dependency_versions_check.py", line 57, in <module>
+    require_version_core(deps[pkg])
+  File "/usr/local/lib/python3.12/dist-packages/transformers/utils/versions.py", line 117, in require_version_core
+    return require_version(requirement, hint)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/transformers/utils/versions.py", line 111, in require_version
+    _compare_versions(op, got_ver, want_ver, requirement, pkg, hint)
+  File "/usr/local/lib/python3.12/dist-packages/transformers/utils/versions.py", line 44, in _compare_versions
+    raise ImportError(
+ImportError: tokenizers>=0.21,<0.22 is required for a normal functioning of this module, but found tokenizers==0.20.3.
+Try: `pip install transformers -U` or `pip install -e '.[dev]'` if you're working with git main
+Traceback (most recent call last):
+  File "/workspace/code/llm/pai-megatron-patch-branch/Pai-Megatron-Patch/examples/qwen2_vl/pretrain_qwen.py", line 44, in <module>
+    from megatron_patch.tokenizer import build_tokenizer, get_tokenizer
+  File "/workspace/code/llm/pai-megatron-patch-branch/Pai-Megatron-Patch/megatron_patch/tokenizer/__init__.py", line 15, in <module>
+    from transformers import AutoTokenizer
+  File "/usr/local/lib/python3.12/dist-packages/transformers/__init__.py", line 26, in <module>
+    from . import dependency_versions_check
+  File "/usr/local/lib/python3.12/dist-packages/transformers/dependency_versions_check.py", line 57, in <module>
+    require_version_core(deps[pkg])
+  File "/usr/local/lib/python3.12/dist-packages/transformers/utils/versions.py", line 117, in require_version_core
+    return require_version(requirement, hint)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/transformers/utils/versions.py", line 111, in require_version
+    _compare_versions(op, got_ver, want_ver, requirement, pkg, hint)
+  File "/usr/local/lib/python3.12/dist-packages/transformers/utils/versions.py", line 44, in _compare_versions
+    raise ImportError(
+ImportError: tokenizers>=0.21,<0.22 is required for a normal functioning of this module, but found tokenizers==0.20.3.
+Try: `pip install transformers -U` or `pip install -e '.[dev]'` if you're working with git main
+/usr/lib/python3.12/tempfile.py:1075: ResourceWarning: Implicitly cleaning up <TemporaryDirectory '/tmp/tmpo8w8lm2v'>
+  _warnings.warn(warn_message, ResourceWarning)
+/usr/lib/python3.12/tempfile.py:1075: ResourceWarning: Implicitly cleaning up <TemporaryDirectory '/tmp/tmprrucomk8'>
+  _warnings.warn(warn_message, ResourceWarning)
+W0506 10:29:58.072000 2616 torch/distributed/elastic/multiprocessing/api.py:897] Sending process 2689 closing signal SIGTERM
+W0506 10:29:58.073000 2616 torch/distributed/elastic/multiprocessing/api.py:897] Sending process 2690 closing signal SIGTERM
+E0506 10:29:58.208000 2616 torch/distributed/elastic/multiprocessing/api.py:869] failed (exitcode: 1) local_rank: 0 (pid: 2688) of binary: /usr/bin/python
+Traceback (most recent call last):
+  File "/usr/local/bin/torchrun", line 33, in <module>
+    sys.exit(load_entry_point('torch==2.6.0a0+ecf3bae40a.nv25.1', 'console_scripts', 'torchrun')())
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 355, in wrapper
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 918, in main
+    run(args)
+  File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 909, in run
+    elastic_launch(
+  File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 138, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 269, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+pretrain_qwen.py FAILED
+------------------------------------------------------------
+Failures:
+[1]:
+  time      : 2025-05-06_10:29:58
+  host      : 236e7645d19e
+  rank      : 3 (local_rank: 3)
+  exitcode  : 1 (pid: 2691)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2025-05-06_10:29:58
+  host      : 236e7645d19e
+  rank      : 0 (local_rank: 0)
+  exitcode  : 1 (pid: 2688)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================
+The target application terminated. One or more process it created re-parented.
+Waiting for termination of re-parented processes.
+Use the `--wait` option to modify this behavior.
+Processing events...
+Generated:

@@ -11,6 +11,7 @@ def vit_encoder_tflops_calculator(W,H,P, in_channels, L, hidden_size, intermedia
         tflops_one_transformer_layer_forward=8*seq_len*(hidden_size**2) + 4*hidden_size*(seq_len**2) + 4*seq_len*hidden_size*intermediate_size
     
     tflops_conv_forward = 2*N*hidden_size*in_channels*(P**2)
+#     tflops_conv_forward = 0
 #     tflops_transformer_forward = (24*N*(hidden_size**2) + 4*hidden_size*(N**2))*L
     tflops_transformer_forward = tflops_one_transformer_layer_forward * L
     tflops=3*(tflops_conv_forward + tflops_transformer_forward)
